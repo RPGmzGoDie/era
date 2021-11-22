@@ -1,7 +1,7 @@
 var info = {}
 var parent = $("div.attr");
 var total = parseInt($("span.total").text());
-
+info["username"] = UrlParam.paramValues()
 var doRandom = function () {
 
 };

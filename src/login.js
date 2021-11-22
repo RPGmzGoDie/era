@@ -4,7 +4,8 @@ $("button#register").click(function(){
     return;
   }
 
-  window.location.href="register.html";
+  username = $("input#username").val();
+  window.location.href="register.html?username=${username}";
 });
 
 $("button#login").click(function(){
