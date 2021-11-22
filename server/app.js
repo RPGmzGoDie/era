@@ -7,17 +7,27 @@ const http = require('http'),
 const hostname = "0.0.0.0";
 const port = 3389;
 
-const server = http.createServer((req, res) => {
-  let pathname = __dirname + url.parse(new URL(req.url)).pathname;
-  if(path.extname(pathname)=='') {
-    pathname+='/view/login.html';
+const server = http.createServer((req, res) => {  
+  let pathname = "";
+  if(path.extname(req.url) == "") {
+    pathname += "/login.html";
+  } else {
+    pathname += req.url;
   }
-  if(path.extname(pathname) != 'html'){
-    res.writeHead('404');
-    res.end('<h1>404</h1>');
-    return;
+  
+  switch(path.extname(pathname)){
+    case ".html":
+      pathname = "../view" + pathname;
+      break;
+    case ".js":
+      pathname = ".." + pathname;
+      break;
+    default:
+      res.writeHead('404');
+      res.end('<h1>404</h1>');
+      return;
   }
-
+  
   fs.readFile(pathname, function(err, data){
     if (err) {
       res.writeHead('404');
