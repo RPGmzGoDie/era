@@ -8,28 +8,24 @@ const hostname = "0.0.0.0";
 const port = 3389;
 
 const server = http.createServer((req, res) => {
-  let pathname = __dirname+url.parse(req.url).pathname;
+  let pathname = __dirname + url.parse(new URL(req.url)).pathname;
   if(path.extname(pathname)=='') {
-    pathname+='/';
+    pathname+='/view/login.html';
   }
-  if(pathname.charAt(pathname.length-1)=='/'){
-    pathname+='index.html';
+  if(path.extname(pathname) != 'html'){
+    res.writeHead('404');
+    res.end('<h1>404</h1>');
+    return;
   }
-  fs.exists(pathname, function(exists){
-    if(exists){
-      switch(path.extname(pathname)){
-        case '.html':
-          res.writeHeader(200, {'Content-Type': 'text/html'});
-          break;
-      }
-      
-      fs.readFile(pathname, function(err, data){
-        res.end(data);
-      });
-    } else {
-      res.writeHeader('404');
+
+  fs.readFile(pathname, function(err, data){
+    if (err) {
+      res.writeHead('404');
       res.end('<h1>404</h1>');
+      throw err;
     }
+    res.writeHeader(200, {'Content-Type': 'text/html'});
+    res.end(data);
   });
 });
 
