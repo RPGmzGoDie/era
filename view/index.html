@@ -1,32 +1,26 @@
 <!DOCTYPE html>
-<html lang="zh">
-  <head>
-  <meta charset="UTF-8">
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Page Title</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+  <script>
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:7770');
 
-  </head>
-  <body>
-    <div class="character">
-      <h3>属性</h3>
-      <p class="attr hp">生命力:<span id="hp"></span></p>
-      <p class="attr capacity">体力:<span id="capacity"></span></p>
-      <p class="attr strength">力量:<span id="strength"></span></p>
-      <p class="attr charm">魅力:<span id="charm"></span></p>
-      <p class="attr money">财富:<span id="money"></span></p>
-      <p class="attr spirit">精神:<span id="spirit"></span></p>
-    </div>
-    <div class="event list">
-      <h3>事件表</h2>
-      <ul id="event"></ul>
-    </div>
-    <div class="op">
-      <h3>操作</h3>
-      <input id="in"><br>
-      <button id="btn">点击</button>
-    </div>
-  </body>
-  <footer>
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+        socket.send('Hello Server!');
+    });
 
-  </footer>
-  <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script><script src=""></script>
-  <script src="../src/do.js"></script>
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        console.log('Message from server ', event.data);
+    });
+  </script>
+</head>
+<body>
+</body>
 </html>

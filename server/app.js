@@ -1,21 +1,20 @@
 const http = require('http'),
-      fs = require('fs'),
-      url = require('url'),
-      path = require('path');
-      
+  fs = require('fs'),
+  path = require('path');
+
 
 const hostname = "0.0.0.0";
 const port = 3389;
 
-const server = http.createServer((req, res) => {  
+const server = http.createServer((req, res) => {
   let pathname = "";
-  if(path.extname(req.url) == "") {
+  if (path.extname(req.url) == "") {
     pathname += "/login.html";
   } else {
     pathname += req.url;
   }
-  
-  switch(path.extname(pathname)){
+
+  switch (path.extname(pathname)) {
     case ".html":
       pathname = "../view" + pathname;
       break;
@@ -27,14 +26,14 @@ const server = http.createServer((req, res) => {
       res.end('<h1>404</h1>');
       return;
   }
-  
-  fs.readFile(pathname, function(err, data){
+
+  fs.readFile(pathname, function (err, data) {
     if (err) {
       res.writeHead('404');
       res.end('<h1>404</h1>');
       throw err;
     }
-    res.writeHeader(200, {'Content-Type': 'text/html'});
+    res.writeHeader(200, { 'Content-Type': 'text/html' });
     res.end(data);
   });
 });
