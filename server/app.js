@@ -1,29 +1,39 @@
 const http = require('http'),
-  fs = require('fs'),
-  path = require('path');
+      url = require('url'),
+      fs = require('fs'),
+      path = require('path'),
+      process = require('process'),
+      ws = require('ws');
 
-
-const hostname = "0.0.0.0";
-const port = 3389;
-
-const server = http.createServer((req, res) => {
-  let pathname = "";
-  if (path.extname(req.url) == "") {
-    pathname += "/login.html";
+const config = fs.readFileSync('config/footer.json');
+const confjson = JSON.parse(config);
+getConfig = function() {
+  if (process.argv.length == 3) {
+    return confjson[process.argv[2]]
   } else {
-    pathname += req.url;
+    return {'hostname':'', 'port':0};
+  }
+};
+const hostname = getConfig()['hostname'];
+const port = getConfig()['port'];
+
+const httpserver = http.createServer((req, res) => {
+  const _url = new url.URL(req.url, 'http://' + hostname);
+  let pathname = _url.pathname;
+  if (pathname == '/') {
+    pathname += 'login.html';
   }
 
   switch (path.extname(pathname)) {
-    case ".html":
-      pathname = "../view" + pathname;
+    case '.html':
+      pathname = '../view' + pathname;
       break;
-    case ".js":
-      pathname = ".." + pathname;
+    case '.js':
+      pathname = '..' + pathname;
       break;
     default:
       res.writeHead('404');
-      res.end('<h1>404</h1>');
+      res.end('<h1>error html</h1>');
       return;
   }
 
@@ -38,6 +48,15 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(port, hostname, () => {
+const websocket = new ws.WebSocketServer({server: httpserver});
+
+websocket.on('connection', function connection(socket) {
+  socket.on('message', function message(data) {
+    const datajson = JSON.parse(data);
+    socket.send(datajson['username']);
+  });
+});
+
+httpserver.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
