@@ -54,9 +54,8 @@ const websocket = new ws.WebSocketServer({server: httpserver});
 
 websocket.on('connection', function connection(socket) {
   socket.on('message', function message(data) {
-    const datajson = JSON.parse(data);
-    console.log(conctrol.getinfo());
-    socket.send(datajson['username']);
+    const ret = conctrol.requset_handler(data);
+    socket.send(JSON.stringify(conctrol.getinfo()));
   });
 });
 

@@ -66,6 +66,7 @@ let login_request_message = function () {
 };
 
 login_request_message.prototype = {
+  message_type:  "login_request",
   set: function (u) {
     this.username = u;
   },
@@ -74,15 +75,19 @@ login_request_message.prototype = {
   },
   clear: function () {
     this.username = "";
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.username});
   }
 }
 
 // login_response_message
 let login_response_message = function () {
-  this.info = character_init();
+  this.clear();
 };
 
 login_response_message.prototype = {
+  message_type: "login_response",
   set: function (info) {
     this.info = info;
   },
@@ -100,6 +105,7 @@ let register_request_message = function () {
 };
 
 register_request_message.prototype = {
+  message_type: "register_request",
   set: function (info) {
     this.info = info;
   },
@@ -122,10 +128,11 @@ register_request_message.prototype = {
 
 // register_response_message
 let register_response_message = function () {
-  this.info = character_init();
+  this.clear();
 };
 
 register_response_message.prototype = {
+  message_type: "register_response",
   set: function (info) {
     this.info = info;
   },
@@ -143,6 +150,7 @@ let event_request_message = function () {
 };
 
 event_request_message.prototype = {
+  message_type: "event_request",
   set: function (info) {
     this.info = info;
   },
@@ -163,6 +171,7 @@ let event_response_message = function () {
 };
 
 event_response_message.prototype = {
+  message_type: "event_response",
   set: function (info) {
     this.info = info;
   },
@@ -179,8 +188,8 @@ event_response_message.prototype = {
 // timer
 
 
-message_func = function (key) {
-  switch (key) {
+message_func = function (message_type) {
+  switch (message_type) {
     case "login_requset":
       return new login_request_message();
     case "login_response":
@@ -197,3 +206,22 @@ message_func = function (key) {
       return {};
   }
 };
+
+message_exchange = function (message_type) {
+  switch (message_type) {
+    case "login_requset":
+      return new login_response_message();
+    case "login_response":
+      return new login_request_message();
+    case "register_request":
+      return new register_response_message();
+    case "register_response":
+      return new register_request_message();
+    case "event_request":
+      return new event_response_message();
+    case "event_response":
+      return new event_request_message();
+    default:
+      return {};
+  }
+}

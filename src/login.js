@@ -9,14 +9,17 @@ $('button#register').click(function () {
 });
 
 $('button#login').click(function () {
-  if ($('input#username').val() == '') {
+  const username = $('input#username').val();
+  if (username == '') {
     alert('请输出账号!');
     return;
   }
 
   const socket = new WebSocket('ws://localhost:7770');
+  let message_ = message_func("login_requset");
+  message_.set(username)
   socket.addEventListener('open', function (event) {
-      socket.send(JSON.stringify(info));
+      socket.send(JSON.stringify(message_.stringify()));
   });
 
   socket.addEventListener('message', function (event) {
