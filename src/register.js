@@ -122,29 +122,29 @@ parent.on('click', '.charm.minus', function () {
   $('span.charm').text(charm);
 });
 
-parent.on('click', '.money.plus', function () {
-  let money = parseInt($('span.money').text());
+parent.on('click', '.appreciation.plus', function () {
+  let appreciation = parseInt($('span.appreciation').text());
   if (total < 1) return;
-  --total; ++money;
-  info['money'] = money;
+  --total; ++appreciation;
+  info['appreciation'] = appreciation;
   $('span.total').text(total);
-  $('span.money').text(money);
+  $('span.appreciation').text(appreciation);
 });
-parent.on('click', '.money.plus-five', function () {
-  let money = parseInt($('span.money').text());
+parent.on('click', '.appreciation.plus-five', function () {
+  let appreciation = parseInt($('span.appreciation').text());
   if (total < 5) return;
-  total -= 5; money += 5;
-  info['money'] = money;
+  total -= 5; appreciation += 5;
+  info['appreciation'] = appreciation;
   $('span.total').text(total);
-  $('span.money').text(money);
+  $('span.appreciation').text(appreciation);
 });
-parent.on('click', '.money.minus', function () {
-  let money = parseInt($('span.money').text());
-  if (money < 1) return;
-  ++total; --money;
-  info['money'] = money;
+parent.on('click', '.appreciation.minus', function () {
+  let appreciation = parseInt($('span.appreciation').text());
+  if (appreciation < 1) return;
+  ++total; --appreciation;
+  info['appreciation'] = appreciation;
   $('span.total').text(total);
-  $('span.money').text(money);
+  $('span.appreciation').text(appreciation);
 });
 
 parent.on('click', '.spirit.plus', function () {
