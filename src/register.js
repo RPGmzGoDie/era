@@ -3,23 +3,26 @@ var parent = $('div.attr');
 var total = parseInt($('span.total').text());
 
 
-var doRandom = function () {
+const doRandom = function () {
 
 };
 
-var doSubmit = function () {
+const doSubmit = function () {
   let url = new URL(document.location.href);
   let username = url.searchParams.get('u');
   info['username'] = username;
+  info['name'] = $('input.name');
+  info['gender'] = $('form.gender');
+  console.log(info['gender']);
   
-  const socket = new WebSocket('ws://localhost:7770');
+  /*const socket = new WebSocket('ws://localhost:7770');
   socket.addEventListener('open', function (event) {
       socket.send(JSON.stringify(info));
   });
 
   socket.addEventListener('message', function (event) {
       console.log('Message from server: ', event.data);
-  });
+  });*/
 };
 
 parent.on('click', '.hp.plus', function () {

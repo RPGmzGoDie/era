@@ -96,6 +96,9 @@ login_response_message.prototype = {
   },
   clear: function () {
     this.character_init = character_init();
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
@@ -123,6 +126,9 @@ register_request_message.prototype = {
     "appreciation": 0,
     "spirit": 0,
     };
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
@@ -141,6 +147,9 @@ register_response_message.prototype = {
   },
   clear: function () {
     this.character_init = character_init();
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
@@ -162,6 +171,9 @@ event_request_message.prototype = {
     "type": 0,
     "content": ""
     };
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
@@ -183,6 +195,9 @@ event_response_message.prototype = {
     "type": 0,
     "content": ""
     };
+  },
+  stringify: function() {
+    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 // timer

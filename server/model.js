@@ -1,18 +1,20 @@
 const fs = require('fs'),
-      events = require('events');
+      events = require('events'),
+      crypto = require('crypto')
+      base_data = require('./base_data');
 
 const hash_fn = function() {
   const magic_num = BigInt(304250263527209);
   return function(str) {
-    let hash = BigInt(0);
-    if (str.length === 0) return hash;
+    let hash = BigInt(crypto.randomInt(1023));
+    if (str.length == 0) return '0';
     for (i = 0; i < str.length; i++) {
       ch = str.charCodeAt(i);
-      hash += ch << 2 + 1;
+      hash += (hash << 2) + BigInt(ch - 1);
     }
     hash %= magic_num;
-    return BigInt.asUintN(32, hash);
-  }
+    return hash.toString();
+  };
 };
 
 const concrete_hash_fn = hash_fn();
@@ -24,26 +26,37 @@ class modelEvents extends events {
     this.user_data = {};
   }
 
-  get checkUser(username) {
-    return this.user_table && this.user_table.include(username);
+  checkUser(username) {
+    return this.user_table 
+      && this.user_table.findIndex((element) => element['user'] === username) !== -1;
   }
 
-  set createUser(username) {
+  findUser(username) {
+    if (!this.checkUser(username)) {
+      return {};
+    }
+    return this.user_data[username];
+  }
+
+  createUser(username) {
     if (this.checkUser(username)) {
-      return;
+      return '';
     }
 
-
+    const unit_str = concrete_hash_fn(username);
+    this.user_table.push({'user': username, 'unit': unit_str + '.json'});
+    this.user_data[username] = base_data.character_init();
+    return unit_str;
   }
 
-  set removeUser(username) {
+  removeUser(username) {
 
   }
 }
 
 exports.model_ev = new modelEvents();
 
-exports.model_ev.once('load_user_data', function() {
+exports.model_ev.once('load_all_data', function() {
   fs.readFile('./data/user.json', (err, data) => {
     if (err) {
       console.log('load user data error!');
@@ -52,9 +65,9 @@ exports.model_ev.once('load_user_data', function() {
 
     this.user_table = JSON.parse(data);
     this.user_table.forEach(element => {
-      fs.readFile('./data/' +  element['data'], (err, unit_data) => {
+      fs.readFile('./data/' +  element['unit'], (err, unit_data) => {
         if (err) {
-          console.log(element['data'] + " doesnt exist!");
+          console.log(element['unit'] + ' doesnt exist!');
           return;
         }
         
@@ -62,4 +75,16 @@ exports.model_ev.once('load_user_data', function() {
       });
     });
   });
+});
+
+exports.model_ev.on('save_user_data',function(){
+
+});
+
+exports.model_ev.on('save_unit_data',function(unit_str){
+
+});
+
+exports.model_ev.once('save_all_data', function(){
+
 });

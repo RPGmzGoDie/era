@@ -10,7 +10,7 @@ const http = require('http'),
 const config = fs.readFileSync('config/footer.json');
 const confjson = JSON.parse(config);
 getConfig = function() {
-  if (process.argv.length == 3) {
+  if (process.argv.length === 3) {
     return confjson[process.argv[2]]
   } else {
     return {'hostname':'', 'port':0};
@@ -22,7 +22,7 @@ const port = getConfig()['port'];
 const httpserver = http.createServer((req, res) => {
   const _url = new url.URL(req.url, 'http://' + hostname);
   let pathname = _url.pathname;
-  if (pathname == '/') {
+  if (pathname === '/') {
     pathname += 'login.html';
   }
 
@@ -54,8 +54,8 @@ const websocket = new ws.WebSocketServer({server: httpserver});
 
 websocket.on('connection', function connection(socket) {
   socket.on('message', function message(data) {
-    const ret = conctrol.requset_handler(data);
-    socket.send(JSON.stringify(conctrol.getinfo()));
+    const response = conctrol.requset_handler(data);
+    socket.send(response.stringify());
   });
 });
 
@@ -63,5 +63,5 @@ httpserver.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-//data
+//init data
 conctrol.init_data();
