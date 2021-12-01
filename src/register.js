@@ -1,4 +1,4 @@
-var info = {}
+var info = new Map();
 var parent = $('div.attr');
 var total = parseInt($('span.total').text());
 
@@ -7,14 +7,27 @@ const doRandom = function () {
 
 };
 
+const checkSubmit = function(info) {
+  this.sum = 0;
+  console.log(info);
+  info.forEach((value, key) => {
+    if (key != 'username' && key != 'name' && key != 'gender') {
+      this.sum += value;
+      console.log(value);
+    }
+  });
+  console.log(this.sum);
+  return this.sum === 300;
+};
+
 const doSubmit = function () {
   let url = new URL(document.location.href);
   let username = url.searchParams.get('u');
   info['username'] = username;
-  info['name'] = $('input.name');
-  info['gender'] = $('form.gender');
-  console.log(info['gender']);
-  
+  info['name'] = $('input.name').val();
+  info['gender'] = $('input:radio[name=gender]:checked').val();
+  console.log(checkSubmit(info));
+
   /*const socket = new WebSocket('ws://localhost:7770');
   socket.addEventListener('open', function (event) {
       socket.send(JSON.stringify(info));

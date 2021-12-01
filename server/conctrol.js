@@ -43,7 +43,7 @@ exports.requset_handler = function(data) {
       return handle_event(message_content);
     default:
       console.log("requset_handler error!");
-      return {};
+      return new Map();
   }
 };
 

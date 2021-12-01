@@ -218,7 +218,7 @@ exports.message_func = function (message_type) {
     case "event_response":
       return new event_response_message();
     default:
-      return {};
+      return new Map();
   }
 };
 
@@ -237,6 +237,6 @@ exports.message_exchange = function (message_type) {
     case "event_response":
       return new event_request_message();
     default:
-      return {};
+      return new Map();
   }
 }
