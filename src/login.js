@@ -26,14 +26,17 @@ $('button#login').click(function () {
   }
 
   const socket = new WebSocket('ws://localhost:7770');
-  let message_ = message_func("login_requset");
-  message_.set(username)
+  let request_message = message_func("login_requset");
+  console.log(request_message);
+  request_message.setInfo({'username': username})
   socket.addEventListener('open', function (event) {
       socket.send(message_.stringify());
   });
 
   socket.addEventListener('message', function (event) {
-      sessionStorage.setItem('user_data', event.data);
-      window.location.href = `game.html?u=${username}`;
+    const datajson = JSON.parse(event.data);
+    sessionStorage.setItem('user_data', datajson);
+    console.log(datajson);
+    window.location.href = `game.html?u=${username}`;
   });
 });
