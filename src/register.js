@@ -1,4 +1,4 @@
-var info = new Map();
+var info = {};
 var parent = $('div.attr');
 var total = parseInt($('span.total').text());
 
@@ -9,14 +9,12 @@ const doRandom = function () {
 
 const checkSubmit = function(info) {
   this.sum = 0;
-  console.log(info);
-  info.forEach((value, key) => {
+  Object.keys(info).forEach((key) => {
     if (key != 'username' && key != 'name' && key != 'gender') {
-      this.sum += value;
-      console.log(value);
+      this.sum += info[key];
     }
   });
-  console.log(this.sum);
+
   return this.sum === 300;
 };
 
@@ -26,16 +24,19 @@ const doSubmit = function () {
   info['username'] = username;
   info['name'] = $('input.name').val();
   info['gender'] = $('input:radio[name=gender]:checked').val();
-  console.log(checkSubmit(info));
+  if (!checkSubmit(info)) {
+    alert('正确正确属性！');
+    return;
+  }
 
-  /*const socket = new WebSocket('ws://localhost:7770');
+  const socket = new WebSocket('ws://localhost:7770');
   socket.addEventListener('open', function (event) {
       socket.send(JSON.stringify(info));
   });
 
   socket.addEventListener('message', function (event) {
       console.log('Message from server: ', event.data);
-  });*/
+  });
 };
 
 parent.on('click', '.hp.plus', function () {

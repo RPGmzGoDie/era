@@ -3,30 +3,35 @@ const proto = require('./proto')
 
 exports.init_data = function() {
   model.model_ev.emit('load_all_data');
-  console.log("has loaded all data.");
+  console.log('===has loaded all data.===');
 };
 
 const handle_login = function(message_content) {
   const username = message_content;
   const user_data = model.model_ev.findUser(username);
-  let response_message = proto.message_func("login_response");
+  let response_message = proto.message_func('login_response');
   if (user_data.size !== 0) {
-    response_message.set(user_data);
+    response_message.setInfo(user_data);
   }
 
   return response_message;
 };
 
 const handle_register = function(message_content) {
-  const unit_str = model.model_ev.createUser(username);
-  if (unit_str != '') {
+  const ret = model.model_ev.createUser(username);
+  let response_message = proto.message_func('register_response');
+  if (ret[0] != '') {
     model.model_ev.emit('save_user_data');
-    model.model_ev.emit('save_unit_data', unit_str);
+    model.model_ev.emit('save_unit_data', [username, unit_str]);
+    response_message.setInfo(ret[1]);
   }
+
+  return response_message;
 };
 
 const handle_event = function(message_content) {
-  
+  let response_message = proto.message_func('event_response');
+  return response_message;
 };
 
 
@@ -43,10 +48,6 @@ exports.requset_handler = function(data) {
       return handle_event(message_content);
     default:
       console.log("requset_handler error!");
-      return new Map();
+      return {};
   }
 };
-
-exports.getinfo = function() {
-  return model.model_ev.user_data;
-}

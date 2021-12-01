@@ -1,242 +1,157 @@
-let character_data = function () {
-  this.name = "";           // 名称
-  this.hp = 100;            // 生命
-  this.capacity = 100;      // 体力
-  this.strength = 0;        // 力量
-  this.charm = 0;           // 魅力 
-  this.appreciation = 0;    // 增值
-  this.spirit = 0;          // 精神
-  this.money = 0;           // 金钱
-  this.race = "";           // 种族
-  this.temperament = "";    // 性格
-  this.mouth = "";          // 口上
-  this.breast = "";         // 胸部大小
-  this.breast_sense = 0;    // 胸部敏感度
-  this.vagina_sense = 0;    // 阴道敏感度
-  this.lust = 0;            // 情欲开发度
-  this.sex_times = 0;       // 性交次数
-  this.sex_exp = 0;         // 侍奉经验
-  this.s_exp = 0;           // S经验
-  this.m_exp = 0;           // M经验
-  this.masturbation = 0;    // 自慰经验
-  this.sanity = "";         // 精神状态
-  this.technique = 0;       // 技巧等级
-  this.level = 0;           // 等级
-  this.consumed_num = 0;    // 接待顾客数    
-  this.score = 0;           // 评分
-  this.quality = [];        // 素质
-
-  return function () {
-    return {
-      "name": this.name,
-      "hp": this.hp,
-      "capacity": this.capacity,
-      "strength": this.strength,
-      "charm": this.charm,
-      "appreciation": this.appreciation,
-      "spirit": this.spirit,
-      "money": this.money,
-      "race": this.race,
-      "temperament": this.temperament,
-      "mouth": this.mouth,
-      "breast": this.breast,
-      "breast_sense": this.breast_sense,
-      "vagina_sense": this.vagina_sense,
-      "lust": this.lust,
-      "sex_times": this.sex_times,
-      "sex_exp": this.sex_exp,
-      "s_exp": this.s_exp,
-      "m_exp": this.m_exp,
-      "masturbation": this.masturbation,
-      "sanity": this.sanity,
-      "technique": this.technique,
-      "level": this.level,
-      "comsumed_num": this.consumed_num,
-      "score": this.score,
-      "quality": this.quality
+class CharactorData {
+  constructor() {
+    this.info = {
+    'name': '',           // 名称
+    'hp': 100,            // 生命
+    'capacity': 100,      // 体力
+    'strength': 0,        // 力量
+    'charm': 0,           // 魅力 
+    'appreciation': 0,    // 增值
+    'spirit': 0,          // 精神
+    'money': 0,           // 金钱
+    'race': '',           // 种族
+    'temperament': '',    // 性格
+    'mouth': '',          // 口上
+    'breast': '',         // 胸部大小
+    'breast_sense': 0,    // 胸部敏感度
+    'vagina_sense': 0,    // 阴道敏感度
+    'lust': 0,            // 情欲开发度
+    'sex_times': 0,       // 性交次数
+    'sex_exp': 0,         // 侍奉经验
+    's_exp': 0,           // S经验
+    'm_exp': 0,           // M经验
+    'masturbation': 0,    // 自慰经验
+    'sanity': '',         // 精神状态
+    'technique': 0,       // 技巧等级
+    'level': 0,           // 等级
+    'consumed_num': 0,    // 接待顾客数
+    'score': 0,           // 评分
+    'quality': []        // 素质
     }
-  };
-};
-
-const character_init = character_data();
-
-// login_request_message
-let login_request_message = function () {
-  this.clear();
-};
-
-login_request_message.prototype = {
-  message_type:  "login_request",
-  set: function (u) {
-    this.username = u;
-  },
-  get: function () {
-    return { 'username': this.username };
-  },
-  clear: function () {
-    this.username = "";
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.username});
   }
 }
 
-// login_response_message
-let login_response_message = function () {
-  this.clear();
+// BaseMessage
+class BaseMessage {
+  constructor() {
+    this.type = '';
+    this.status = '';
+    this.clear();
+  }
+  setInfo(info) {
+    this.info = info;
+  }
+  getInfo() {
+    return this.info;
+  }
+  clear() {
+    this.info = {};
+  }
+  stringify() {
+    return {'type': this.type, 'status': this.status, 'content': this.info};
+  }
 };
 
-login_response_message.prototype = {
-  message_type: "login_response",
-  set: function (info) {
-    this.info = info;
-  },
-  get: function () {
-    return this.info;
-  },
-  clear: function () {
+// LoginRequestMessage
+class LoginRequestMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'login_request';
+  }
+  clear() {
+    this.info = {'username': ''};
+  }
+}
+
+// LoginResponseMessage
+class LoginResponseMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'login_response';
+  }
+  clear() {
+    this.info = new CharactorData();
+  }
+}
+
+// RegisterRequestMessage
+class RegisterRequestMessage extends BaseMessage{
+  constructor(){
+    super();
+    this.type = 'register_request';
+  }
+  clear() {
+    this.info = {
+    'hp': 0,
+    'capacity': 0,
+    'strength': 0,
+    'charm': 0,
+    'appreciation': 0,
+    'spirit': 0,
+    'username': '',
+    'name': '',
+    'gender': ''
+    };
+  }
+}
+
+// RegisterResponseMessage
+class RegisterResponseMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'register_response';
+  }
+  clear() {
     this.character_init = character_init();
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
-// register_request_message
-let register_request_message = function () {
-  this.clear();
-};
-
-register_request_message.prototype = {
-  message_type: "register_request",
-  set: function (info) {
-    this.info = info;
-  },
-  get: function () {
-    return this.info;
-  },
-  clear: function () {
+// EventRequestMessage
+class EventRequestMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'event_request';
+  }
+  clear() {
     this.info = {
-    "username":"",
-    "name":"",
-    "hp": 0,
-    "capacity": 0,
-    "strength": 0,
-    "charm": 0,
-    "appreciation": 0,
-    "spirit": 0,
+    'type': 0,
+    'content': ''
     };
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
-// register_response_message
-let register_response_message = function () {
-  this.clear();
-};
-
-register_response_message.prototype = {
-  message_type: "register_response",
-  set: function (info) {
-    this.info = info;
-  },
-  get: function () {
-    return this.info;
-  },
-  clear: function () {
-    this.character_init = character_init();
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
+// EventResponseMessage
+class EventResponseMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'event_response';
   }
-}
-
-// event_request_message
-let event_request_message = function () {
-  this.clear();
-};
-
-event_request_message.prototype = {
-  message_type: "event_request",
-  set: function (info) {
-    this.info = info;
-  },
-  get: function () {
-    return this.info;
-  },
-  clear: function () {
+  clear() {
     this.info = {
-    "type": 0,
-    "content": ""
+    'type': 0,
+    'content': ''
     };
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
   }
 }
 
-// event_response_message
-let event_response_message = function () {
-  this.clear();
-};
-
-event_response_message.prototype = {
-  message_type: "event_response",
-  set: function (info) {
-    this.info = info;
-  },
-  get: function () {
-    return this.info;
-  },
-  clear: function () {
-    this.info = {
-    "type": 0,
-    "content": ""
-    };
-  },
-  stringify: function() {
-    return JSON.stringify({"message_type": this.message_type, "message_content": this.info});
-  }
-}
 // timer
 
-
-exports.message_func = function (message_type) {
-  switch (message_type) {
-    case "login_requset":
-      return new login_request_message();
-    case "login_response":
-      return new login_response_message();
-    case "register_request":
-      return new register_request_message();
-    case "register_response":
-      return new register_response_message();
-    case "event_request":
-      return new event_request_message();
-    case "event_response":
-      return new event_response_message();
+// exports
+exports.message_func = function (type) {
+  switch (type) {
+    case 'login_requset':
+      return new LoginRequestMessage();
+    case 'login_response':
+      return new LoginResponseMessage();
+    case 'register_request':
+      return new RegisterRequestMessage();
+    case 'register_response':
+      return new RegisterResponseMessage();
+    case 'event_request':
+      return new EventRequestMessage();
+    case 'event_response':
+      return new EventResponseMessage();
     default:
-      return new Map();
+      return new BaseMessage();
   }
 };
-
-exports.message_exchange = function (message_type) {
-  switch (message_type) {
-    case "login_requset":
-      return new login_response_message();
-    case "login_response":
-      return new login_request_message();
-    case "register_request":
-      return new register_response_message();
-    case "register_response":
-      return new register_request_message();
-    case "event_request":
-      return new event_response_message();
-    case "event_response":
-      return new event_request_message();
-    default:
-      return new Map();
-  }
-}
