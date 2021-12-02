@@ -26,17 +26,25 @@ $('button#login').click(function () {
   }
 
   const socket = new WebSocket('ws://localhost:7770');
-  let request_message = message_func("login_requset");
-  console.log(request_message);
+  let request_message = messageFunc("login_requset");
   request_message.setInfo({'username': username})
   socket.addEventListener('open', function (event) {
-      socket.send(message_.stringify());
+      socket.send(request_message.stringify());
   });
 
   socket.addEventListener('message', function (event) {
     const datajson = JSON.parse(event.data);
-    sessionStorage.setItem('user_data', datajson);
-    console.log(datajson);
-    window.location.href = `game.html?u=${username}`;
+    let response_message = messageFunc('login_response');
+    response_message.init(datajson);
+    if (response_message.isSucess()) {
+      sessionStorage.setItem('user_data', datajson);
+      window.location.href = `game.html?u=${username}`;
+    } else {
+      if (!response_message.status) {
+        alert('未知错误！');
+      } else {
+        alert(response_message.status);
+      }
+    }
   });
 });

@@ -1,16 +1,16 @@
 const fs = require('fs'),
   events = require('events'),
   crypto = require('crypto')
-  proto = require('./proto');
+proto = require('./proto');
 
 const hash_fn = function () {
   const magic_num = BigInt(304250263527209);
   return function (str) {
-    let hash = BigInt(crypto.randomInt(1023));
+    let hash = BigInt(crypto.randomInt(1024));
     if (str.length == 0) return '0';
     for (i = 0; i < str.length; i++) {
       ch = str.charCodeAt(i);
-      hash += (hash << 2) + BigInt(ch - 1);
+      hash += (hash << BigInt(2)) + BigInt(ch - 1);
     }
     hash %= magic_num;
     return hash.toString();
@@ -19,7 +19,8 @@ const hash_fn = function () {
 
 const concrete_hash_fn = hash_fn();
 
-class ModelEvents extends events {
+// data
+class DataModel extends events {
   constructor() {
     super();
     this.user_table = new Array();
@@ -27,37 +28,41 @@ class ModelEvents extends events {
   }
 
   checkUser(username) {
-    return this.user_table
-      && this.user_table.findIndex((element) => element['user'] === username) !== -1;
+    return this.user_table.findIndex((element) => element['user'] === username) !== -1;
   }
-
-  findUser(username) {
-    if (!this.checkUser(username)) {
+  
+  findUserInfo(username) {
+    const index = this.user_table.findIndex((element) => element['user'] === username);
+    if (index === -1) {
       return {};
     }
-    return this.user_data[username];
+    return this.user_table[index];
   }
-
-  createUser(username) {
-    if (this.checkUser(username)) {
-      return ['', {}];
-    }
-
-    const unit_str = concrete_hash_fn(username);
-    this.user_table.push({ 'user': username, 'unit': unit_str + '.json' });
-    this.user_data[username] = new proto.CharactorData();
-    return [unit_str, this.user_data[username]];
-  }
-
-  removeUser(username) {
-
-  }
-
+  
   findUserData(username) {
     if (!this.checkUser(username)) {
       return {};
     }
     return this.user_data[username];
+  }
+
+  createUser(info) {
+    const username = info['username'];
+    if (this.checkUser(username)) {
+      return {};
+    }
+
+    const unit_str = concrete_hash_fn(username);
+    this.user_table.push({ 'user': username, 'unit': unit_str + '.json' });
+    this.user_data[username] = new proto.CharactorData();
+    Object.keys(info).forEach((key) => {
+      this.user_data[username][key] = info[key];
+    });
+    return this.user_data[username];
+  }
+
+  removeUser(username) {
+
   }
 
   updateUserData(username, args) {
@@ -73,9 +78,9 @@ class ModelEvents extends events {
   };
 }
 
-exports.model_ev = new ModelEvents();
+exports.data_model = new DataModel();
 
-exports.model_ev.once('load_all_data', function () {
+exports.data_model.on('load_all_data', function () {
   fs.readFile('./data/user.json', (err, data) => {
     if (err) {
       console.log('load user data error!');
@@ -96,20 +101,62 @@ exports.model_ev.once('load_all_data', function () {
   });
 });
 
-exports.model_ev.on('save_user_data', function () {
-  fs.write('./data/user.json', JSon.stringify(this.user_table), (err) => {
+exports.data_model.on('save_user_data', function () {
+  fs.writeFile('./data/user.json', JSON.stringify(this.user_table), (err) => {
     if (err) throw err;
     console.log('user.json has been saved!');
   });
 });
 
-exports.model_ev.on('save_unit_data', function (user_unit) {
-  fs.write('./data/' + user_unit[1] + '.json', JSon.stringify(this.user_data[user_unit[0]]), (err) => {
+exports.data_model.on('save_unit_data', function (username) {
+  const user_info = this.findUserInfo(username);
+  const unit = user_info['unit'];
+  if (!unit) {return;}
+  fs.writeFile('./data/' + unit + '.json', JSON.stringify(this.user_data[username]), (err) => {
     if (err) throw err;
-    console.log(`${user_unit[1]}.json has been saved!`);
+    console.log(`${unit}.json has been saved!`);
   });
 });
 
-exports.model_ev.once('save_all_data', function () {
+exports.data_model.once('save_all_data', function () {
 
+});
+
+// config
+class ConfigModel extends events {
+  constructor() {
+    super();
+    this.attr_config = {};
+    this.events_table = new Array();
+  }
+  getRandomRace() {
+    const index = crypto.randomInt(this.attr_config['race'].length);
+    return this.attr_config['race'][index];
+  }
+  getRandomEvent() {
+    const index = crypto.randomInt(this.events_table.length);
+    return this.events_table[index]; 
+  }
+}
+
+exports.config_model = new ConfigModel();
+
+exports.config_model.on('load_all_config', function () {
+  fs.readFile('./config/attr.json', (err, data) => {
+    if (err) {
+      console.log('load attr config error!');
+      throw err;
+    }
+
+    this.attr_config = JSON.parse(data);
+  });
+
+  fs.readFile('./config/events.json', (err, data) => {
+    if (err) {
+      console.log('load events config error!');
+      throw err;
+    }
+
+    this.events_table = JSON.parse(data);
+  });
 });

@@ -1,59 +1,70 @@
-class character_data {
-  constructor() {
-    this.info = {
-    'name': '',           // 名称
-    'hp': 100,            // 生命
-    'capacity': 100,      // 体力
-    'strength': 0,        // 力量
-    'charm': 0,           // 魅力 
-    'appreciation': 0,    // 增值
-    'spirit': 0,          // 精神
-    'money': 0,           // 金钱
-    'race': '',           // 种族
-    'temperament': '',    // 性格
-    'mouth': '',          // 口上
-    'breast': '',         // 胸部大小
-    'breast_sense': 0,    // 胸部敏感度
-    'vagina_sense': 0,    // 阴道敏感度
-    'lust': 0,            // 情欲开发度
-    'sex_times': 0,       // 性交次数
-    'sex_exp': 0,         // 侍奉经验
-    's_exp': 0,           // S经验
-    'm_exp': 0,           // M经验
-    'masturbation': 0,    // 自慰经验
-    'sanity': '',         // 精神状态
-    'technique': 0,       // 技巧等级
-    'level': 0,           // 等级
-    'consumed_num': 0,    // 接待顾客数
-    'score': 0,           // 评分
-    'quality': []        // 素质
-    }
-  }
-}
+const CharactorData = function() {
+  this.name = "";           // 名称
+  this.hp = 100;            // 生命
+  this.capacity = 100;      // 体力
+  this.strength = 0;        // 力量
+  this.charm = 0;           // 魅力 
+  this.appreciation = 0;    // 增值
+  this.spirit = 0;          // 精神
+  this.money = 0;           // 金钱
+  this.race = "";           // 种族
+  this.temperament = "";    // 性格
+  this.mouth = "";          // 口上
+  this.breast = "";         // 胸部大小
+  this.breast_sense = 0;    // 胸部敏感度
+  this.vagina_sense = 0;    // 阴道敏感度
+  this.lust = 0;            // 情欲开发度
+  this.sex_times = 0;       // 性交次数
+  this.sex_exp = 0;         // 侍奉经验
+  this.s_exp = 0;           // S经验
+  this.m_exp = 0;           // M经验
+  this.masturbation = 0;    // 自慰经验
+  this.sanity = "";         // 精神状态
+  this.technique = 0;       // 技巧等级
+  this.level = 0;           // 等级
+  this.consumed_num = 0;    // 接待顾客数    
+  this.score = 0;           // 评分
+  this.quality = [];        // 素质
+};
 
-// base_message
-class base_message {
+// BaseMessage
+class BaseMessage {
   constructor() {
     this.type = '';
     this.status = '';
     this.clear();
   }
-  set_info(info) {
+  setInfo(info) {
     this.info = info;
   }
-  get_info() {
+  getInfo() {
     return this.info;
   }
   clear() {
     this.info = {};
   }
   stringify() {
-    return {'type': this.type, 'status': this.status, 'content': this.info};
+    return JSON.stringify({'type': this.type, 'status': this.status, 'content': this.info});
+  }
+  setSucess() {
+    this.status = 'Success';
+  }
+  isSucess() {
+    return this.status === 'Success';
+  }
+  setStatus(status) {
+    this.status = status;
+  }
+  init(datajson) {
+    if(datajson['type'] == this.type) {
+      this.status = datajson['status'];
+      this.info = datajson['content'];
+    }
   }
 };
 
 // LoginRequestMessage
-class LoginRequestMessage extends base_message {
+class LoginRequestMessage extends BaseMessage {
   constructor() {
     super();
     this.type = 'login_request';
@@ -64,18 +75,18 @@ class LoginRequestMessage extends base_message {
 }
 
 // LoginResponseMessage
-class LoginResponseMessage extends base_message {
+class LoginResponseMessage extends BaseMessage {
   constructor() {
     super();
     this.type = 'login_response';
   }
   clear() {
-    this.info = new character_data();
+    this.info = new CharactorData();
   }
 }
 
 // RegisterRequestMessage
-class RegisterRequestMessage extends base_message{
+class RegisterRequestMessage extends BaseMessage{
   constructor(){
     super();
     this.type = 'register_request';
@@ -96,18 +107,43 @@ class RegisterRequestMessage extends base_message{
 }
 
 // RegisterResponseMessage
-class RegisterResponseMessage extends base_message {
+class RegisterResponseMessage extends BaseMessage {
   constructor() {
     super();
     this.type = 'register_response';
   }
   clear() {
-    this.character_init = character_init();
+    this.info = new CharactorData();
+  }
+}
+
+// DrawRequestMessage
+class DrawRequestMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'draw_request';
+  }
+  clear() {
+    this.info = {
+    'type': 0,
+    'content': ''
+    };
+  }
+}
+
+// DrawResponseMessage
+class DrawResponseMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'draw_response';
+  }
+  clear() {
+    this.info = new CharactorData();
   }
 }
 
 // EventRequestMessage
-class EventRequestMessage extends base_message {
+class EventRequestMessage extends BaseMessage {
   constructor() {
     super();
     this.type = 'event_request';
@@ -121,7 +157,7 @@ class EventRequestMessage extends base_message {
 }
 
 // EventResponseMessage
-class EventResponseMessage extends base_message {
+class EventResponseMessage extends BaseMessage {
   constructor() {
     super();
     this.type = 'event_response';
@@ -129,7 +165,8 @@ class EventResponseMessage extends base_message {
   clear() {
     this.info = {
     'type': 0,
-    'content': ''
+    'content': '',
+    'info': {}
     };
   }
 }
@@ -137,7 +174,7 @@ class EventResponseMessage extends base_message {
 // timer
 
 // exports
-message_func = function (type) {
+messageFunc = function (type) {
   switch (type) {
     case 'login_requset':
       return new LoginRequestMessage();
@@ -152,6 +189,6 @@ message_func = function (type) {
     case 'event_response':
       return new EventResponseMessage();
     default:
-      return new base_message();
+      return new BaseMessage();
   }
 };

@@ -63,5 +63,7 @@ httpserver.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-//init data
+// init data
 conctrol.init_data();
+// init config
+conctrol.init_config();

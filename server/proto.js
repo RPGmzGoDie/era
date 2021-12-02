@@ -1,35 +1,31 @@
-class CharactorData {
-  constructor() {
-    this.info = {
-    'name': '',           // 名称
-    'hp': 100,            // 生命
-    'capacity': 100,      // 体力
-    'strength': 0,        // 力量
-    'charm': 0,           // 魅力 
-    'appreciation': 0,    // 增值
-    'spirit': 0,          // 精神
-    'money': 0,           // 金钱
-    'race': '',           // 种族
-    'temperament': '',    // 性格
-    'mouth': '',          // 口上
-    'breast': '',         // 胸部大小
-    'breast_sense': 0,    // 胸部敏感度
-    'vagina_sense': 0,    // 阴道敏感度
-    'lust': 0,            // 情欲开发度
-    'sex_times': 0,       // 性交次数
-    'sex_exp': 0,         // 侍奉经验
-    's_exp': 0,           // S经验
-    'm_exp': 0,           // M经验
-    'masturbation': 0,    // 自慰经验
-    'sanity': '',         // 精神状态
-    'technique': 0,       // 技巧等级
-    'level': 0,           // 等级
-    'consumed_num': 0,    // 接待顾客数
-    'score': 0,           // 评分
-    'quality': []        // 素质
-    }
-  }
-}
+exports.CharactorData = function() {
+  this.name = "";           // 名称
+  this.hp = 100;            // 生命
+  this.capacity = 100;      // 体力
+  this.strength = 0;        // 力量
+  this.charm = 0;           // 魅力 
+  this.appreciation = 0;    // 增值
+  this.spirit = 0;          // 精神
+  this.money = 0;           // 金钱
+  this.race = "";           // 种族
+  this.temperament = "";    // 性格
+  this.mouth = "";          // 口上
+  this.breast = "";         // 胸部大小
+  this.breast_sense = 0;    // 胸部敏感度
+  this.vagina_sense = 0;    // 阴道敏感度
+  this.lust = 0;            // 情欲开发度
+  this.sex_times = 0;       // 性交次数
+  this.sex_exp = 0;         // 侍奉经验
+  this.s_exp = 0;           // S经验
+  this.m_exp = 0;           // M经验
+  this.masturbation = 0;    // 自慰经验
+  this.sanity = "";         // 精神状态
+  this.technique = 0;       // 技巧等级
+  this.level = 0;           // 等级
+  this.consumed_num = 0;    // 接待顾客数    
+  this.score = 0;           // 评分
+  this.quality = [];        // 素质
+};
 
 // BaseMessage
 class BaseMessage {
@@ -48,7 +44,22 @@ class BaseMessage {
     this.info = {};
   }
   stringify() {
-    return {'type': this.type, 'status': this.status, 'content': this.info};
+    return JSON.stringify({'type': this.type, 'status': this.status, 'content': this.info});
+  }
+  setSucess() {
+    this.status = 'Success';
+  }
+  isSucess() {
+    return this.status === 'Success';
+  }
+  setStatus(status) {
+    this.status = status;
+  }
+  init(datajson) {
+    if(datajson['type'] == this.type) {
+      this.status = datajson['status'];
+      this.info = datajson['content'];
+    }
   }
 };
 
@@ -70,7 +81,7 @@ class LoginResponseMessage extends BaseMessage {
     this.type = 'login_response';
   }
   clear() {
-    this.info = new CharactorData();
+    this.info = new exports.CharactorData();
   }
 }
 
@@ -102,7 +113,32 @@ class RegisterResponseMessage extends BaseMessage {
     this.type = 'register_response';
   }
   clear() {
-    this.character_init = character_init();
+    this.info = new exports.CharactorData();
+  }
+}
+
+// DrawRequestMessage
+class DrawRequestMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'draw_request';
+  }
+  clear() {
+    this.info = {
+    'type': 0,
+    'content': ''
+    };
+  }
+}
+
+// DrawResponseMessage
+class DrawResponseMessage extends BaseMessage {
+  constructor() {
+    super();
+    this.type = 'draw_response';
+  }
+  clear() {
+    this.info = new CharactorData();
   }
 }
 
@@ -129,7 +165,8 @@ class EventResponseMessage extends BaseMessage {
   clear() {
     this.info = {
     'type': 0,
-    'content': ''
+    'content': '',
+    'info': {}
     };
   }
 }
@@ -137,7 +174,7 @@ class EventResponseMessage extends BaseMessage {
 // timer
 
 // exports
-exports.message_func = function (type) {
+exports.messageFunc = function (type) {
   switch (type) {
     case 'login_requset':
       return new LoginRequestMessage();

@@ -1,4 +1,4 @@
-var info = {};
+var info = {'hp':100,'capacity':100};
 var parent = $('div.attr');
 var total = parseInt($('span.total').text());
 
@@ -25,17 +25,32 @@ const doSubmit = function () {
   info['name'] = $('input.name').val();
   info['gender'] = $('input:radio[name=gender]:checked').val();
   if (!checkSubmit(info)) {
-    alert('正确正确属性！');
+    alert('确认属性分配无误！');
     return;
   }
 
   const socket = new WebSocket('ws://localhost:7770');
   socket.addEventListener('open', function (event) {
-      socket.send(JSON.stringify(info));
+      let request_message = messageFunc('register_request');
+      request_message.setInfo(info);
+      socket.send(request_message.stringify());
   });
 
   socket.addEventListener('message', function (event) {
-      console.log('Message from server: ', event.data);
+    const datajson = JSON.parse(event.data);
+    let response_message = messageFunc('register_response');
+    console.log(response_message);
+    response_message.init(datajson);
+    if (response_message.isSucess()) {
+      sessionStorage.setItem('user_data', datajson);
+      window.location.href = `draw.html?u=${username}`;
+    } else {
+      if (!response_message.status) {
+        alert('未知错误！');
+      } else {
+        alert(response_message.status);
+      }
+    }
   });
 };
 
