@@ -1,6 +1,8 @@
+const socket = new WebSocket('ws://localhost:7770');
+
 $('button#register').click(function () {
   const username = $('input#username').val();
-  if (username == '') {
+  if (!username) {
     alert('请输出账号!');
     return;
   }
@@ -15,7 +17,7 @@ $('button#register').click(function () {
 
 $('button#login').click(function () {
   const username = $('input#username').val();
-  if (username == '') {
+  if (!username) {
     alert('请输出账号!');
     return;
   }
@@ -24,27 +26,25 @@ $('button#login').click(function () {
     alert('你太长了');
     return;
   }
-
-  const socket = new WebSocket('ws://localhost:7770');
+  
+  // send
   let request_message = messageFunc("login_requset");
-  request_message.setInfo({'username': username})
-  socket.addEventListener('open', function (event) {
-      socket.send(request_message.stringify());
-  });
+  request_message.setUsername(username);
+  socket.send(request_message.stringify());  
+});
 
-  socket.addEventListener('message', function (event) {
-    const datajson = JSON.parse(event.data);
-    let response_message = messageFunc('login_response');
-    response_message.init(datajson);
-    if (response_message.isSucess()) {
-      sessionStorage.setItem('user_data', datajson);
-      window.location.href = `game.html?u=${username}`;
+socket.addEventListener('message', function (event) {
+  const datajson = JSON.parse(event.data);
+  let response_message = messageFunc('login_response');
+  response_message.init(datajson);
+  if (response_message.isSucess()) {
+    sessionStorage.setItem('user_data', response_message.getInfo());
+    window.location.href = `game.html?u=${response_message.getUsername()}`;
+  } else {
+    if (!response_message.status) {
+      alert('协议出错！');
     } else {
-      if (!response_message.status) {
-        alert('未知错误！');
-      } else {
-        alert(response_message.status);
-      }
+      alert(response_message.status);
     }
-  });
+  }
 });

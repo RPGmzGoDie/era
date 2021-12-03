@@ -1,14 +1,14 @@
 const proto = require('./proto')
       model = require('./model');
 
-const handle_login = function(info) {
-  const username = info['username'];
-  const user_data = model.data_model.findUserData(username);
-  let response_message = proto.messageFunc('login_response');
+const handle_login = function(username, info) {
+  let user_data = model.data_model.findUserData(username);
+  const response_message = proto.messageFunc('login_response');
   if (Object.keys(user_data).length > 0) {
     // update
-    response_message.setInfo(user_data);
     response_message.setSucess();
+    response_message.setUsername(username);
+    response_message.setInfo(user_data);
   } else {
     response_message.setStatus('登陆失败，账号不存在！');
   }
@@ -16,12 +16,12 @@ const handle_login = function(info) {
   return response_message;
 };
 
-const handle_register = function(info) {
+const handle_register = function(username, info) {
   let response_message = proto.messageFunc('register_response');
   //check
   let sum = 0;
   Object.keys(info).forEach((key) => {
-    if (key != 'username' && key != 'name' && key != 'gender') {
+    if (key != 'name' && key != 'gender') {
       sum += info[key];
     }
   });
@@ -30,15 +30,16 @@ const handle_register = function(info) {
     return response_message;
   }
 
-  const user_data = model.data_model.createUser(info);
+  let user_data = model.data_model.createUser(username, info);
   if (Object.keys(user_data).length > 0) {
     // update
-    response_message.setInfo(user_data); 
     response_message.setSucess();
+    response_message.setUsername(username);
+    response_message.setInfo(user_data); 
 
     // save
     model.data_model.emit('save_user_data');
-    model.data_model.emit('save_unit_data', info['username']);
+    model.data_model.emit('save_unit_data', username);
   } else {
     response_message.setStatus('账号已存在，注册失败！');
   }
@@ -46,10 +47,9 @@ const handle_register = function(info) {
   return response_message;
 };
 
-const handle_draw = function(info) {
+const handle_draw = function(username, info) {
   let response_message = proto.messageFunc('draw_response');
   //check
-  const username = info['username'];
   if (!username) {
     response_message.setStatus('傻逼错误！');
     return response_message;
@@ -62,16 +62,18 @@ const handle_draw = function(info) {
   // create
   const race = model.config_model.getRandomRace();
   //update
-  const new_user_data = model.data_model.updateUserData(username, {'race':race});
+  const new_user_data = model.data_model.updateUserData(username, {'race': race});
+  response_message.setSucess();
+  response_message.setUsername(username);
   response_message.setInfo(new_user_data);
   
   //save
-  model.data_model.emit('save_unit_data', info['username']);
+  model.data_model.emit('save_unit_data', username);
 
   return response_message;
 };
 
-const handle_event = function(info) {
+const handle_event = function(username, info) {
   let response_message = proto.messageFunc('event_response');
 
   // create 
@@ -81,10 +83,9 @@ const handle_event = function(info) {
     return response_message;
   }
   
-  // update
+
   const content = event['content'];
   let attr = event['attr'];
-  const username = info['username'];
   const user_data = model.data_model.findUserData(username);
   if(Object.keys(user_data).length == 0) {
     response_message.setStatus('账号出出出出错了！');
@@ -95,7 +96,10 @@ const handle_event = function(info) {
     attr[key] = user_data[key] + attr[key];
   });
 
+  // update
   const new_user_data = model.data_model.updateUserData(username, attr);
+  response_message.setSucess();
+  response_message.setUsername(username);
   response_message.setInfo({'content': content, 'info': new_user_data});
   
   // save
@@ -108,19 +112,20 @@ const handle_event = function(info) {
 exports.requset_handler = function(data) {
   let datajson = JSON.parse(data);
   const type = datajson['type'];
+  const username = datajson['username'];
   const info = datajson['content'];
   switch (type) {
     case 'login_request':
-      return handle_login(info);
+      return handle_login(username, info);
     case 'register_request':
-      return handle_register(info);
+      return handle_register(username, info);
     case 'draw_request':
-      return handle_draw(info);
+      return handle_draw(username, info);
     case 'event_request':
-      return handle_event(info);
+      return handle_event(username, info);
     default:
       console.log('requset_handler error!');
-      return {};
+      return proto.messageFunc('');
   }
 };
 

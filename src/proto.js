@@ -1,4 +1,4 @@
-const CharactorData = function() {
+let CharactorData = function() {
   this.name = "";           // 名称
   this.hp = 100;            // 生命
   this.capacity = 100;      // 体力
@@ -27,11 +27,38 @@ const CharactorData = function() {
   this.quality = [];        // 素质
 };
 
+CharactorData.prototype.set = function(info) {
+  this.name = info['name'];
+  this.hp = info['hp'];
+  this.capacity = info['capacity'];
+  this.strength = info['strength'];
+  this.charm = info['charm'];
+  this.appreciation = info['appreciation'];
+  this.spirit = info['spirit'];
+  this.money = info['money'];
+  this.race = info['race'];
+  this.temperament = info['temperament'];
+  this.mouth = info['mouth'];
+  this.breast = info['breast'];
+  this.breast_sense = info['breast_sense'];
+  this.vagina_sense = info['vagina_sense'];
+  this.lust = info['lust'];
+  this.sex_times = info['sex_times'];
+  this.sex_exp = info['sex_exp'];
+  this.s_exp = info['s_exp'];
+  this.m_exp = info['m_exp'];
+  this.masturbation = info['masturbation'];
+  this.sanity = info['sanity'];
+  this.technique = info['technique'];
+  this.level = info['level'];
+  this.consumed_num = info['consumed_num']; 
+  this.score = info['score'];
+  this.quality = info['quality'];
+};
+
 // BaseMessage
 class BaseMessage {
   constructor() {
-    this.type = '';
-    this.status = '';
     this.clear();
   }
   setInfo(info) {
@@ -40,11 +67,19 @@ class BaseMessage {
   getInfo() {
     return this.info;
   }
+  setUsername(username) {
+    this.username = username;
+  }
+  getUsername() {
+    return this.username;
+  }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = {};
   }
   stringify() {
-    return JSON.stringify({'type': this.type, 'status': this.status, 'content': this.info});
+    return JSON.stringify({ 'type': this.type, 'status': this.status, 'username': this.username, 'content': this.info });
   }
   setSucess() {
     this.status = 'Success';
@@ -58,6 +93,7 @@ class BaseMessage {
   init(datajson) {
     if(datajson['type'] == this.type) {
       this.status = datajson['status'];
+      this.username = datajson['username'];
       this.info = datajson['content'];
     }
   }
@@ -69,9 +105,6 @@ class LoginRequestMessage extends BaseMessage {
     super();
     this.type = 'login_request';
   }
-  clear() {
-    this.info = {'username': ''};
-  }
 }
 
 // LoginResponseMessage
@@ -81,6 +114,8 @@ class LoginResponseMessage extends BaseMessage {
     this.type = 'login_response';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = new CharactorData();
   }
 }
@@ -92,6 +127,8 @@ class RegisterRequestMessage extends BaseMessage{
     this.type = 'register_request';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = {
     'hp': 0,
     'capacity': 0,
@@ -99,7 +136,6 @@ class RegisterRequestMessage extends BaseMessage{
     'charm': 0,
     'appreciation': 0,
     'spirit': 0,
-    'username': '',
     'name': '',
     'gender': ''
     };
@@ -113,6 +149,8 @@ class RegisterResponseMessage extends BaseMessage {
     this.type = 'register_response';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = new CharactorData();
   }
 }
@@ -123,12 +161,6 @@ class DrawRequestMessage extends BaseMessage {
     super();
     this.type = 'draw_request';
   }
-  clear() {
-    this.info = {
-    'type': 0,
-    'content': ''
-    };
-  }
 }
 
 // DrawResponseMessage
@@ -138,6 +170,8 @@ class DrawResponseMessage extends BaseMessage {
     this.type = 'draw_response';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = new CharactorData();
   }
 }
@@ -149,9 +183,10 @@ class EventRequestMessage extends BaseMessage {
     this.type = 'event_request';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = {
-    'type': 0,
-    'content': ''
+      'type': 0
     };
   }
 }
@@ -163,6 +198,8 @@ class EventResponseMessage extends BaseMessage {
     this.type = 'event_response';
   }
   clear() {
+    this.status = '';
+    this.username = '';
     this.info = {
     'type': 0,
     'content': '',
@@ -184,6 +221,10 @@ messageFunc = function (type) {
       return new RegisterRequestMessage();
     case 'register_response':
       return new RegisterResponseMessage();
+    case 'draw_request':
+      return new DrawRequestMessage();
+    case 'draw_response':
+      return new DrawResponseMessage();
     case 'event_request':
       return new EventRequestMessage();
     case 'event_response':

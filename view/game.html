@@ -5,19 +5,67 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!--link rel="stylesheet" type="text/css" media="screen" href="main.css" -->
+  <link rel="stylesheet" type="text/css" media="screen" href="view.css" >
   <title>鸽子模拟器</title>
 </head>
 
 <body>
-  <div class="character">
-    <h3>属性</h3>
-    <p class="attr hp">生命力:<span id="hp"></span></p>
-    <p class="attr capacity">体力:<span id="capacity"></span></p>
-    <p class="attr strength">力量:<span id="strength"></span></p>
-    <p class="attr charm">魅力:<span id="charm"></span></p>
-    <p class="attr money">:<span id="money"></span></p>
-    <p class="attr spirit">精神:<span id="spirit"></span></p>
+  <div class="charactor">
+    <table width="100%">
+      <td>
+        <table class="charactor main">
+          <thead><th>主属性</th></thead>
+          <tbody>
+            <td><p class="attr race">种族:<span id="race"></span></p></td>
+            <tr>
+              <td><p class="attr hp">生命力:<span id="hp"></span></p></td>
+              <td><p class="attr capacity">体力:<span id="capacity"></span></p></td>
+            </tr>
+            <tr>
+              <td><p class="attr strength">力量:<span id="strength"></span></p></td>
+              <td><p class="attr charm">魅力:<span id="charm"></span></p></td>
+            </tr>
+            <tr>
+              <td><p class="attr appreciation">增值:<span id="appreciation"></span></p></td>
+              <td><p class="attr spirit">精神:<span id="spirit"></span></p></td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td>
+        <table class="charactor detail">
+          <thead><th>详细属性</th></thead>
+          <tbody>
+            <td><p class="attr money">金钱:<span id="money"></span></p></td>
+            <td><p class="attr temperament">性格:<span id="temperament"></span></p></td>
+            <td><p class="attr sanity">精神状态:<span id="sanity"></span></p></td>
+            <tr>
+              <td><p class="attr mouth">口上:<span id="mouth"></span></p></td>
+              <td><p class="attr breast">胸部大小:<span id="breast"></span></p></td>
+              <td><p class="attr breast_sense">胸部敏感度:<span id="breast_sense"></span></p></td>
+              <td><p class="attr vagina_sense">阴道敏感度:<span id="vagina_sense"></span></p></td>
+            </tr>
+            <tr>
+              <td><p class="attr sex_exp">侍奉经验:<span id="sex_exp"></span></p></td>
+              <td><p class="attr s_exp">S经验:<span id="s_exp"></span></p></td>
+              <td><p class="attr m_exp">M经验:<span id="m_exp"></span></p></td>
+              <td><p class="attr masturbation">自慰经验:<span id="masturbation"></span></p></td>
+            </tr>
+              <tr>
+                <td><p class="attr lust">情欲开发度:<span id="lust"></span></p></td>
+                <td><p class="attr sex_times">性交次数:<span id="sex_times"></span></p></td>
+                <td><p class="attr consumed_num">接待顾客数:<span id="consumed_num"></span></p></td>
+              </tr>
+              <tr>
+                <td><p class="attr technique">技巧等级:<span id="technique"></span></p></td>
+                <td><p class="attr level">等级:<span id="level"></span></p></td>
+                <td><p class="attr score">评分:<span id="score"></span></p></td>
+                <td><p class="attr quality">素质:<span id="quality"></span></p></td>
+              </tr>
+          </tbody>
+        </table>
+      </td>
+    </table>
   </div>
   <div class="event list">
     <h3>事件表</h2>
@@ -26,7 +74,7 @@
   <div class="op">
     <h3>操作</h3>
     <input id="in"><br>
-    <button id="btn">点击</button>
+    <button id="happen">点击冒险</button>
   </div>
 </body>
 <footer>

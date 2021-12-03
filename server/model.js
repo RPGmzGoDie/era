@@ -46,8 +46,7 @@ class DataModel extends events {
     return this.user_data[username];
   }
 
-  createUser(info) {
-    const username = info['username'];
+  createUser(username, info) {
     if (this.checkUser(username)) {
       return {};
     }
@@ -70,8 +69,8 @@ class DataModel extends events {
       return {};
     }
 
-    this.user_data[username].forEach((value, key) => {
-      value = args[key];
+    Object.keys(args).forEach((key) => {
+      this.user_data[username][key] = args[key];
     });
 
     return this.user_data[username];
@@ -112,7 +111,7 @@ exports.data_model.on('save_unit_data', function (username) {
   const user_info = this.findUserInfo(username);
   const unit = user_info['unit'];
   if (!unit) {return;}
-  fs.writeFile('./data/' + unit + '.json', JSON.stringify(this.user_data[username]), (err) => {
+  fs.writeFile('./data/' + unit, JSON.stringify(this.user_data[username]), (err) => {
     if (err) throw err;
     console.log(`${unit}.json has been saved!`);
   });

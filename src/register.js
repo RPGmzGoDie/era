@@ -1,8 +1,9 @@
 var info = {'hp':100,'capacity':100};
 var parent = $('div.attr');
 var total = parseInt($('span.total').text());
+const socket = new WebSocket('ws://localhost:7770');
 
-
+// random fixed sum
 const doRandom = function () {
 
 };
@@ -10,7 +11,7 @@ const doRandom = function () {
 const checkSubmit = function(info) {
   this.sum = 0;
   Object.keys(info).forEach((key) => {
-    if (key != 'username' && key != 'name' && key != 'gender') {
+    if (key != 'name' && key != 'gender') {
       this.sum += info[key];
     }
   });
@@ -19,9 +20,8 @@ const checkSubmit = function(info) {
 };
 
 const doSubmit = function () {
-  let url = new URL(document.location.href);
-  let username = url.searchParams.get('u');
-  info['username'] = username;
+  const url = new URL(document.location.href);
+  const username = url.searchParams.get('u');
   info['name'] = $('input.name').val();
   info['gender'] = $('input:radio[name=gender]:checked').val();
   if (!checkSubmit(info)) {
@@ -29,30 +29,28 @@ const doSubmit = function () {
     return;
   }
 
-  const socket = new WebSocket('ws://localhost:7770');
-  socket.addEventListener('open', function (event) {
-      let request_message = messageFunc('register_request');
-      request_message.setInfo(info);
-      socket.send(request_message.stringify());
-  });
-
-  socket.addEventListener('message', function (event) {
-    const datajson = JSON.parse(event.data);
-    let response_message = messageFunc('register_response');
-    console.log(response_message);
-    response_message.init(datajson);
-    if (response_message.isSucess()) {
-      sessionStorage.setItem('user_data', datajson);
-      window.location.href = `draw.html?u=${username}`;
-    } else {
-      if (!response_message.status) {
-        alert('未知错误！');
-      } else {
-        alert(response_message.status);
-      }
-    }
-  });
+  // send
+  let request_message = messageFunc('register_request');
+  response_message.setUsername(username);
+  request_message.setInfo(info);
+  socket.send(request_message.stringify());
 };
+
+socket.addEventListener('message', function (event) {
+  const datajson = JSON.parse(event.data);
+  let response_message = messageFunc('register_response');
+  response_message.init(datajson);
+  if (response_message.isSucess()) {
+    sessionStorage.setItem('user_data', response_message.getInfo());
+    window.location.href = `draw.html?u=${response_message.getUsername()}`;
+  } else {
+    if (!response_message.status) {
+      alert('协议出错！');
+    } else {
+      alert(response_message.status);
+    }
+  }
+});
 
 parent.on('click', '.hp.plus', function () {
   let hp = parseInt($('span.hp').text());

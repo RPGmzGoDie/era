@@ -28,6 +28,7 @@ const httpserver = http.createServer((req, res) => {
 
   switch (path.extname(pathname)) {
     case '.html':
+    case '.css':
       pathname = '../view' + pathname;
       break;
     case '.js':
