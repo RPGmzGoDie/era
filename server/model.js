@@ -1,7 +1,7 @@
 const fs = require('fs'),
   events = require('events'),
-  crypto = require('crypto')
-proto = require('./proto');
+  crypto = require('crypto'),
+  proto = require('./proto');
 
 const hash_fn = function () {
   const magic_num = BigInt(304250263527209);
@@ -18,6 +18,10 @@ const hash_fn = function () {
 };
 
 const concrete_hash_fn = hash_fn();
+
+const deepCopy = function(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 
 // data
 class DataModel extends events {

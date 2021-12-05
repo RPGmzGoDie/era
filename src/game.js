@@ -37,7 +37,7 @@ const execNormalEvent = function(response_message) {
 $('button#happen').click(function(){
   // send
   let request_message = messageFunc('event_request');
-  response_message.setUsername(username);
+  request_message.setUsername(username);
   request_message.setInfo({'type': 0});
   socket.send(request_message.stringify());
 });
@@ -55,15 +55,16 @@ socket.addEventListener('message', function (event) {
     return;
   }
 
-  switch(response_message.type) {
+  switch(response_message.getInfo()['type']) {
     case 0:
       execNormalEvent(response_message);
     default:
   }
 });
 
-let info = sessionStorage.getItem('user_data');
-if (Object.keys(info) != total_attr_num) {
+let info = JSON.parse(sessionStorage.getItem('user_data'));
+console.log(info);
+if (Object.keys(info).length <= 0) {
   alert("没有缓存~");
 } else {
   updateInfo(info);

@@ -1,5 +1,5 @@
 exports.CharactorData = function () {
-  this.name = "";           // 名称
+  this.name = '';           // 名称
   this.hp = 100;            // 生命
   this.capacity = 100;      // 体力
   this.strength = 0;        // 力量
@@ -7,10 +7,10 @@ exports.CharactorData = function () {
   this.appreciation = 0;    // 增值
   this.spirit = 0;          // 精神
   this.money = 0;           // 金钱
-  this.race = "";           // 种族
-  this.temperament = "";    // 性格
-  this.mouth = "";          // 口上
-  this.breast = "";         // 胸部大小
+  this.race = '';           // 种族
+  this.temperament = '';    // 性格
+  this.mouth = '';          // 口上
+  this.breast = '';         // 胸部大小
   this.breast_sense = 0;    // 胸部敏感度
   this.vagina_sense = 0;    // 阴道敏感度
   this.lust = 0;            // 情欲开发度
@@ -19,12 +19,13 @@ exports.CharactorData = function () {
   this.s_exp = 0;           // S经验
   this.m_exp = 0;           // M经验
   this.masturbation = 0;    // 自慰经验
-  this.sanity = "";         // 精神状态
+  this.sanity = '';         // 精神状态
   this.technique = 0;       // 技巧等级
   this.level = 0;           // 等级
   this.consumed_num = 0;    // 接待顾客数    
   this.score = 0;           // 评分
   this.quality = [];        // 素质
+  this.recent_events = [];  // 最近十次事件
 };
 
 exports.CharactorData.prototype.set = function (info) {

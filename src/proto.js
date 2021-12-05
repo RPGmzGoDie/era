@@ -25,6 +25,7 @@ let CharactorData = function() {
   this.consumed_num = 0;    // 接待顾客数    
   this.score = 0;           // 评分
   this.quality = [];        // 素质
+  this.recent_events = [];  // 最近十次事件
 };
 
 CharactorData.prototype.set = function(info) {

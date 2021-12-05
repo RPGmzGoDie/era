@@ -21,7 +21,7 @@ socket.addEventListener('message', function (event) {
   let response_message = messageFunc('draw_response');
   response_message.init(datajson);
   if (response_message.isSucess()) {
-    sessionStorage.setItem('user_data', datajson);
+    sessionStorage.setItem('user_data', JSON.stringify(response_message.getInfo()));
     $('div.draw-div').append('<button id="next">下一步</button>');
   } else {
     if (!response_message.status) {

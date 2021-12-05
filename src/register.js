@@ -41,7 +41,7 @@ socket.addEventListener('message', function (event) {
   let response_message = messageFunc('register_response');
   response_message.init(datajson);
   if (response_message.isSucess()) {
-    sessionStorage.setItem('user_data', response_message.getInfo());
+    sessionStorage.setItem('user_data', JSON.stringify(response_message.getInfo()));
     window.location.href = `draw.html?u=${response_message.getUsername()}`;
   } else {
     if (!response_message.status) {

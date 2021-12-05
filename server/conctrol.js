@@ -75,6 +75,12 @@ const handle_draw = function(username, info) {
 
 const handle_event = function(username, info) {
   let response_message = proto.messageFunc('event_response');
+  // check
+  const user_data = model.data_model.findUserData(username);
+  if(Object.keys(user_data).length == 0) {
+    response_message.setStatus('账号出出出出错了！');
+    return response_message;
+  }
 
   // create 
   const event = model.config_model.getRandomEvent();
@@ -82,28 +88,25 @@ const handle_event = function(username, info) {
     response_message.setStatus('地球正在毁灭！');
     return response_message;
   }
-  
-
-  const content = event['content'];
+ 
   let attr = event['attr'];
-  const user_data = model.data_model.findUserData(username);
-  if(Object.keys(user_data).length == 0) {
-    response_message.setStatus('账号出出出出错了！');
-    return response_message;
-  }
-
   Object.keys(attr).forEach((key)=>{
     attr[key] = user_data[key] + attr[key];
   });
+  const content = event['content'];
+  while (user_data[key]['current_events'].length >= 10) {
+    user_data[key]['current_events'].shift();
+  }
+  attr['current_evens'] = user_data[key]['current_events'];
 
   // update
   const new_user_data = model.data_model.updateUserData(username, attr);
   response_message.setSucess();
   response_message.setUsername(username);
-  response_message.setInfo({'content': content, 'info': new_user_data});
+  response_message.setInfo({'content': content, 'type': info['type'], 'info': new_user_data});
   
   // save
-  model.data_model.emit('save_unit_data', info['username']);
+  model.data_model.emit('save_unit_data', username);
   
   return response_message;
 };
