@@ -6,7 +6,7 @@ $('button#draw').click(function () {
   let request_message = messageFunc("draw_request");
   
   // send
-  request_message.setInfo({'username': username});
+  request_message.setUsername(username);
   socket.send(request_message.stringify());
 });
 

@@ -3,6 +3,7 @@ const url = new URL(document.location.href);
 const username = url.searchParams.get('u');
 const total_attr_num = 25;
 const updateInfo = function(info) {
+  $('span#name').text(info['name']);
   $('span#hp').text(info['hp']);
   $('span#capacity').text(info['capacity']);
   $('span#strength').text(info['strength']);
@@ -24,7 +25,7 @@ const updateInfo = function(info) {
   $('span#sex_times').text(info['sex_times']);
   $('span#consumed_num').text(info['consumed_num']);
   $('span#technique').text(info['technique']);
-  $('span#level').text(info['levels']);
+  $('span#level').text(info['level']);
   $('span#score').text(info['score']);
   $('span#quality').text(info['quality']);
 };
@@ -63,7 +64,6 @@ socket.addEventListener('message', function (event) {
 });
 
 let info = JSON.parse(sessionStorage.getItem('user_data'));
-console.log(info);
 if (Object.keys(info).length <= 0) {
   alert("没有缓存~");
 } else {

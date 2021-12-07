@@ -31,7 +31,7 @@ const doSubmit = function () {
 
   // send
   let request_message = messageFunc('register_request');
-  response_message.setUsername(username);
+  request_message.setUsername(username);
   request_message.setInfo(info);
   socket.send(request_message.stringify());
 };

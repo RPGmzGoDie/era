@@ -94,10 +94,11 @@ const handle_event = function(username, info) {
     attr[key] = user_data[key] + attr[key];
   });
   const content = event['content'];
-  while (user_data[key]['current_events'].length >= 10) {
-    user_data[key]['current_events'].shift();
+  attr['recent_events'] = JSON.parse(JSON.stringify(user_data['recent_events']));
+  attr['recent_events'].push(content);
+  while (attr['recent_events'].length >= 10) {
+    attr['recent_events'].shift();
   }
-  attr['current_evens'] = user_data[key]['current_events'];
 
   // update
   const new_user_data = model.data_model.updateUserData(username, attr);
