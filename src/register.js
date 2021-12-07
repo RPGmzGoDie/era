@@ -1,6 +1,7 @@
 var info = {'hp':100,'capacity':100};
 var parent = $('div.attr');
 var total = parseInt($('span.total').text());
+const default_val = 100;
 const socket = new WebSocket('ws://localhost:7770');
 
 // random fixed sum
@@ -70,7 +71,7 @@ parent.on('click', '.hp.plus-five', function () {
 });
 parent.on('click', '.hp.minus', function () {
   let hp = parseInt($('span.hp').text());
-  if (hp < 1) return;
+  if (hp <= default_val) return;
   ++total; --hp;
   info['hp'] = hp;
   $('span.total').text(total);
@@ -94,10 +95,10 @@ parent.on('click', '.capacity.plus-five', function () {
   $('span.capacity').text(capacity);
 });
 parent.on('click', '.capacity.minus', function () {
-  let hp = parseInt($('span.capacity').text());
-  if (hp < 1) return;
-  ++total; --hp;
-  info['capacity'] = hp;
+  let capacity = parseInt($('span.capacity').text());
+  if (capacity <= default_val) return;
+  ++total; --capacity;
+  info['capacity'] = capacity;
   $('span.total').text(total);
   $('span.hp').text(hp);
 });
